@@ -32,3 +32,19 @@ input_data = bf.ndarray(np.array([
 linking_length = 4.0
 
 peaks = PeakDetect(input_data.as_BFarray(), linking_length)
+
+print(f"Shape: [{peaks.shape[0]}, {peaks.shape[1]}]")
+print(f"Strides: [{peaks.strides[0]}, {peaks.strides[1]}]")
+print(f"Dtype: {peaks.dtype} space {peaks.space} ndim {peaks.ndim}")
+
+shape  = (peaks.shape[0], peaks.shape[1])
+strides = (peaks.strides[0], peaks.strides[1])
+
+b = bf.ndarray.__new__(bf.ndarray,
+                    space='system',
+                    buffer=int(peaks.data),
+                    shape=shape,
+                    dtype='f64',
+                    strides=strides)
+
+print(b)

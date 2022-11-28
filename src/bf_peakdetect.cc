@@ -20,12 +20,24 @@ BFarray PeakDetect(BFarray *bf_data, double linking_length)
     auto peaks = peak_detect(input_arr, num_points, num_dimensions, linking_length);
     
     BFarray bf_peaks; // Create empty output vector
-    bf_peaks.dtype = BF_DTYPE_F32;
+    bf_peaks.dtype = BF_DTYPE_F64;
     bf_peaks.space = BF_SPACE_SYSTEM;
     bf_peaks.ndim = 2;
-    bf_peaks.shape[0] = peaks.size();
-    bf_peaks.data = peaks.data();
-    
+
+    // Setup shape and strides: max_dim is 8
+    const size_t BF_MAX_DIMS = 8;
+
+    for (unsigned long i = 0; i < BF_MAX_DIMS; i++) {
+        bf_peaks.shape[i] = 0;
+        bf_peaks.strides[i] = 0;
+    }
+
+    bf_peaks.shape[0]   = peaks.size();
+    bf_peaks.shape[1]   = num_dimensions;
+    bf_peaks.strides[0] = 8 * num_dimensions;
+    bf_peaks.strides[1] = 8;
+    bf_peaks.data       = peaks.data();
+
     return bf_peaks;
 }
 

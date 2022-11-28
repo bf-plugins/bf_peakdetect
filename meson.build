@@ -1,7 +1,6 @@
 
 # Bifrost wrapper file
 project('bf_peakdetect', 'cpp', 'cuda', version: '0.1.0')
-
 plugin_name = 'bf_peakdetect'
 cc = meson.get_compiler('cpp')
 
