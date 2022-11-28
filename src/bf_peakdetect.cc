@@ -6,6 +6,8 @@
 #include "bf_peakdetect.h"
 #include "peakdetect.hpp"
 
+extern "C" {
+
 BFarray PeakDetect(BFarray *bf_data, double linking_length)
 {
     
@@ -25,4 +27,6 @@ BFarray PeakDetect(BFarray *bf_data, double linking_length)
     bf_peaks.data = peaks.data();
     
     return bf_peaks;
+}
+
 }

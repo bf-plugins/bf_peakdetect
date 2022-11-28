@@ -6,6 +6,7 @@
 
 #define DEBUG 1
 
+
 // Count number of hits in input array 
 // Finds first zero-valued entry and returns index
 size_t count_hits(array_type_2D input_arr, size_t npts_input) {

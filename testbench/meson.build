@@ -6,7 +6,7 @@ testexe = executable(
     dependencies : doctest_dep) 
 
 # test execution 
-test('Peak Detection Test', testexe)
+test('C++ peakdet', testexe)
 
-# we can specify other test execution passing arguments or environment variables
-#test('Uuid test with args and env', testexe, args : ['arg1', 'arg2'], env : ['FOO=bar'])
+test('Python bindings', py3,
+    args : files('test_bf_peakdetect.py'))

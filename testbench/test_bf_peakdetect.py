@@ -1,35 +1,34 @@
-import numpy as np
+from bf_peakdetect import PeakDetect
 import bifrost as bf
-from build import bf_peakdetect_generated as _bf
+import numpy as np
 
-def generate_gold_comparison():
-    """ Generate a 'gold' known-good comparison array """
-    return np.ones((10, 2, 2))
+input_data = bf.ndarray(np.array([
+        [ 19.      , 493.      ,  69.166145,   0.     ],
+        [ 18.      , 494.      ,  37.214165,   0.     ],
+        [ 20.      , 492.      ,  37.28009 ,   0.     ],
+        [ 16.      , 494.      ,  30.877373,   1.     ],
+        [ 20.      , 492.      ,  44.028553,   1.     ],
+        [ 19.      , 492.      ,  44.023758,   1.     ],
+        [ 21.      , 492.      ,  35.27555 ,   1.     ],
+        [ 17.      , 493.      ,  35.253258,   1.     ],
+        [ 22.      , 491.      ,  30.816935,   1.     ],
+        [ 18.      , 493.      ,  43.97715 ,   1.     ],
+        [ 19.      , 493.      ,  43.981934,   1.     ],
+        [ 19.      , 492.      ,  30.983809,   2.     ],
+        [ 17.      , 492.      ,  31.328333,   2.     ],
+        [ 20.      , 492.      ,  30.940197,   2.     ],
+        [ 18.      , 492.      ,  31.30946 ,   2.     ],
+        [ 19.      , 490.      ,  31.29538 ,   2.     ],
+        [ 20.      , 490.      ,  31.233295,   2.     ],
+        [ 22.      , 490.      ,  30.90926 ,   2.     ],
+        [ 21.      , 490.      ,  31.212713,   2.     ],
+        [  0.      ,   0.      ,   8.      ,   0.     ],
+        [  1.      ,   1.      ,   10.      ,   0.    ],
+        [  0.      ,   0.      ,   0.      ,   0.     ],
+        [  0.      ,   0.      ,   0.      ,   0.     ],
+        [  0.      ,   0.      ,   0.      ,   0.     ],
+], dtype='float64'))
 
-def test_bf_peakdetect():
-    # Create known 'gold' output
-    d_gold_cpu = generate_gold_comparison()
+linking_length = 4.0
 
-    # Create input and output data
-    input_dims = (10, 10, 10)
-    output_dims = (10, 2, 2)
-
-    d_in_cpu = np.zeros(input_dims, dtype='float32')
-    d_in_gpu = bf.ndarray(d_in_cpu, dtype='f32', space='cuda')
-
-    d_out_zeros_cpu = np.zeros(input_dims, dtype='float32')
-    d_out_gpu       = bf.ndarray(d_out_zeros_cpu, dtype='f32', space='cuda')
-
-    # Run main functions
-    _bf.XcorrLite(d_gpu.as_BFarray(), xcorr_bf.as_BFarray(), np.int32(reset))
-
-    # Test output matches gold CPU standard
-    print("Copy result from GPU...")
-    dout_cpu = np.array(d_out_gpu.copy('system'))
-        
-    print("Comparing CPU to GPU...")
-    assert np.allclose(dout_cpu, dout_gold)
-
-
-if __name__ == "__main__":
-    test_bf_peakdetect()
+peaks = PeakDetect(input_data.as_BFarray(), linking_length)
