@@ -1,27 +1,16 @@
 ## bf_peakdetect
 
-Port of friends-of-friends PyFoF
+Port of friends-of-friends PyFoF for use with boxcar threshold code.
+PyFoF: https://github.com/simongibbons/pyfof/
 
-Author: Danny Price
+Author: Danny Price (+PyFoF authors)
 
-### Compiling your plugin
-
-To build your plugin:
-
-0) Setup your build environment (on topaz, run `source setup_env.sh`).
-1) Add your source code to `src/`. Names must be `bf_peakdetect.h` and `bf_peakdetect.cu`.
-2) compile with meson by running:
+## Compilation and testing
 
 ```
-meson setup build
+meson setup build --prefix=/home/dancpr/software/local
 cd build
 meson compile
+meson test
 ```
 
-### Using your plugin
-
-```python
-from build import bf_peakdetect_generated as _bf
-_bf.init()
-_bf.execute(data_in.as_BFarray(), data_out.as_BFarray())
-```
