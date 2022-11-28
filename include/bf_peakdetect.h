@@ -5,19 +5,7 @@
 extern "C" {
 #endif
 
-typedef struct bf_peakdet* bfplugin;
-
-BFstatus BfPeakdetectCreate(bfplugin* plan_ptr);
-BFstatus BfPeakdetectInit(bfplugin  plan,
-                  int   n_param1,
-                  int   n_param2);
-BFstatus BfPeakdetectSetStream(bfplugin plan,
-                       void const* stream);
-BFstatus BfPeakdetectResetState(bfplugin plan);
-BFstatus BfPeakdetectExecute(bfplugin plan,
-                     BFarray const* in,
-                     BFarray*       out);
-BFstatus BfPeakdetectDestroy(bfplugin plan);
+BFarray PeakDetect(BFarray *bf_data, double linking_length);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,6 +14,7 @@ builddir = meson.project_build_root()
 incdir = include_directories('include')
 
 boost_dep   = dependency('boost')
+cuda_dep    = dependency('cuda', version : '>=9', modules : ['cudart', 'nvrtc'])
 doctest_dep = dependency('doctest') # Subproject for unit test
 
 # Dependency: bifrost
@@ -28,8 +29,7 @@ bf_include = include_directories(
     )
 
 srcs = [
- 'src/fof.cc',
- 'src/fof_brute.cc'
+ 'src/bf_peakdetect.cc'
 ]
 
 # Generate python wrapper from .h file
@@ -47,9 +47,9 @@ if get_option('generate_wrapper')
 endif 
 
 # Compile into shared object
-lib_peakdetect = library('peaktest', ['src/peakdetect.cc', 'src/fof.cc', 'src/fof_brute.cc'], 
+lib_peakdetect = library('peaktest', ['src/bf_peakdetect.cc', 'src/peakdetect.cc', 'src/fof.cc', 'src/fof_brute.cc'], 
                  dependencies: [bf_dep, boost_dep],
-                 include_directories: ['src', incdir])
+                 include_directories: [incdir, bf_include])
 
 # Python install
 #py_mod = import('python')

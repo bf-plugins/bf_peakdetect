@@ -130,6 +130,7 @@ if __name__== "__main__":
 
     # Read .h headers and generate ctypesgen JSON
     for header_file in header_files:
+        print(crayons.white(f"opening {header_file}"))
         hdr['bn']= os.path.splitext(os.path.basename(header_file))[0]
         ctypes_cmd = j2_ctypes_tpl.render(hdr)
 
