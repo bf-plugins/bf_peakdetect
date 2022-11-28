@@ -64,14 +64,14 @@ python_sources_blocks =  [
   'pythonsrc/blocks/__init__.py'
 ]
 
-#py3.install_sources(python_sources, subdir: plugin_name)
-#py3.install_sources(python_sources_blocks, subdir: plugin_name + '/blocks')
+py3.install_sources(python_sources, subdir: plugin_name)
+py3.install_sources(python_sources_blocks, subdir: plugin_name + '/blocks')
 
 # Generate shared object
-#py3.extension_module(plugin_name, srcs,  
-#              dependencies: [bf_dep, boost_dep], include_directories: bf_include, 
-#              subdir: plugin_name,
-#              install: true)
+py3.extension_module(plugin_name, srcs,  
+              dependencies: [bf_dep, boost_dep], include_directories: bf_include, 
+              subdir: plugin_name,
+              install: true)
 
 
 # meson will try to find a meson.build file inside following directories
