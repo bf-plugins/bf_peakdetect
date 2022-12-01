@@ -1,4 +1,4 @@
-from bf_peakdetect import PeakDetect
+from bf_peakdetect import PeakDetect, PeakDetect2
 import bifrost as bf
 import numpy as np
 
@@ -40,11 +40,9 @@ print(f"Dtype: {peaks.dtype} space {peaks.space} ndim {peaks.ndim}")
 shape  = (peaks.shape[0], peaks.shape[1])
 strides = (peaks.strides[0], peaks.strides[1])
 
-b = bf.ndarray.__new__(bf.ndarray,
-                    space='system',
-                    buffer=int(peaks.data),
-                    shape=shape,
-                    dtype='f64',
-                    strides=strides)
-
+b = bf.ndarray(peaks)
 print(b)
+
+peaks2 = PeakDetect2(input_data.as_BFarray(), linking_length)
+b2 = bf.ndarray(peaks2)
+print(b2)

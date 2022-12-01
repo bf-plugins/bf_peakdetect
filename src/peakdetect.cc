@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "peakdetect.hpp"
 
-#define DEBUG 1
+#define DEBUG 0
 
 
 // Count number of hits in input array 
@@ -81,9 +81,10 @@ array_type_2D peak_detect(array_type_2D input_arr, int npts_input, int ndim_inpu
       std::cout << *it << " ";
       #endif
     }
-    #ifdef DEBUG
-    std::cout << std::endl;
-    #endif 
+    
+    //#ifdef DEBUG
+    //std::cout << std::endl;
+    //#endif 
 
     maxidx_arr[i][0] = input_arr[maxidx][0]; // X
     maxidx_arr[i][1] = input_arr[maxidx][1]; // Y 

@@ -1,1 +1,1 @@
-from .libbf_peakdetect_wrapper import PeakDetect
+from .libbf_peakdetect_wrapper import PeakDetect, PeakDetect2
