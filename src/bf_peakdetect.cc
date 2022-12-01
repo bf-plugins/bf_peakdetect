@@ -4,8 +4,13 @@
 #include <iostream>
 #include <boost/multi_array.hpp>
 #include "bf_peakdetect.h"
-#include "peakdetect.hpp"
 #include <cstring>
+
+// Need to typedef a 2D array
+#include "boost/multi_array.hpp"
+typedef boost::multi_array<double, 2> array_type_2D;
+
+//#define DEBUG 1
 
 extern "C" {
 
@@ -18,6 +23,7 @@ BFarray bfArrayCreate(BFspace space, BFdtype dtype, int ndim ) {
     // Setup shape and strides: max_dim is 8
     const size_t BF_MAX_DIMS = 8;
 
+    // Set all dims to zero to start
     for (unsigned long i = 0; i < BF_MAX_DIMS; i++) {
         bf_arr.shape[i] = 0;
         bf_arr.strides[i] = 0;
@@ -26,33 +32,20 @@ BFarray bfArrayCreate(BFspace space, BFdtype dtype, int ndim ) {
     return bf_arr;
 }
 
-BFarray PeakDetect(BFarray *bf_data, double linking_length)
-{
-    
-    // get data and Ndims from BFarray input
-    double* data = (double *)bf_data->data;
-    const int num_points = bf_data->shape[0];
-    const int num_dimensions = 4;
-
-    boost::multi_array_ref<double, 2> input_arr{(double *)data, boost::extents[num_points][num_dimensions]};
-    auto peaks = peak_detect(input_arr, num_points, num_dimensions, linking_length);
-    
-    BFarray bf_peaks = bfArrayCreate(BF_SPACE_SYSTEM, BF_DTYPE_F64, 2);
-
-    bf_peaks.shape[0]   = peaks.size();
-    bf_peaks.shape[1]   = num_dimensions;
-    bf_peaks.strides[0] = 8 * num_dimensions;
-    bf_peaks.strides[1] = 8;
-
-    // Copy data over
-    bfArrayMalloc(&bf_peaks);
-    long size_bytes = bf_peaks.strides[0] * bf_peaks.shape[0];
-    memcpy(bf_peaks.data, peaks.data(), size_bytes);
-
-    return bf_peaks;
+// Count number of hits in input array 
+// Finds first zero-valued entry and returns index
+size_t count_hits(array_type_2D input_arr, size_t npts_input) {
+  size_t npts = 1;
+  for (uint i = 1; i < npts_input; i++) {
+    npts = i;
+    if(input_arr[i][2] < 0.001) {
+      break;
+    } 
+  }
+  return npts;
 }
 
-BFarray PeakDetect2(BFarray *bf_data, double linking_length) {
+BFarray PeakDetect(BFarray *bf_data, double linking_length) {
 
   // get data and Ndims from BFarray input
   double* dataptr = (double *)bf_data->data;
@@ -85,7 +78,10 @@ BFarray PeakDetect2(BFarray *bf_data, double linking_length) {
   //std::vector< std::vector<size_t> > v;
   auto v = friends_of_friends(data, npts, ndim, linking_length);
   
+  #ifdef DEBUG
   std::cout << "Size: " << v.size() << std::endl;
+  #endif
+
 
   // Create boost array for detected maxima
   const uint n_groups =  v.size();
@@ -145,4 +141,4 @@ BFarray PeakDetect2(BFarray *bf_data, double linking_length) {
 
 }
 
-} // externC
+} // extern C
