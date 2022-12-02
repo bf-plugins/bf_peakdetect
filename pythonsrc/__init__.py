@@ -1,4 +1,4 @@
-from .libbf_peakdetect_wrapper import PeakDetect
+from .libbf_peakdetect_wrapper import bfPeakDetect
 import numpy as np 
 import bifrost as bf
 
@@ -18,6 +18,6 @@ def peak_detect(input_data: bf.ndarray, link_length: float) -> bf.ndarray:
     if input_data.shape[1] != 4:
         raise RuntimeError("Input array must be (Nx4) in shape")
 
-    _peaks = PeakDetect(input_data.as_BFarray(), link_length)
+    _peaks = bfPeakDetect(input_data.as_BFarray(), link_length)
     peaks  = bf.ndarray(_peaks)
     return peaks

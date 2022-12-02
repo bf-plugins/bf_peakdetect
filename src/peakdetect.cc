@@ -1,17 +1,34 @@
-#include <stdio.h>
-#include <iostream>
-#include <vector>
-#include <algorithm>
 #include "peakdetect.hpp"
 
-#define DEBUG 0
+//#define DEBUG 0
 
+BFarray bfArrayCreate(BFspace space, BFdtype dtype, int ndim ) {
+    BFarray bf_arr; // Create empty output vector
+    bf_arr.dtype = dtype;
+    bf_arr.space = space;
+    bf_arr.ndim  = ndim;
+
+    // Setup shape and strides: max_dim is 8
+    const size_t BF_MAX_DIMS = 8;
+
+    // Set all dims to zero to start
+    for (unsigned long i = 0; i < BF_MAX_DIMS; i++) {
+        bf_arr.shape[i] = 0;
+        bf_arr.strides[i] = 0;
+    }
+
+    return bf_arr;
+}
 
 // Count number of hits in input array 
 // Finds first zero-valued entry and returns index
 size_t count_hits(array_type_2D input_arr, size_t npts_input) {
   size_t npts = 1;
-  for (uint i = 1; i < npts_input; i++) {
+  size_t i0 = npts_input - 1; 
+  while (input_arr[i0][2] > 0.001) {
+    i0 /= 2;
+  }
+  for (uint i = i0; i < npts_input; i++) {
     npts = i;
     if(input_arr[i][2] < 0.001) {
       break;
@@ -20,45 +37,48 @@ size_t count_hits(array_type_2D input_arr, size_t npts_input) {
   return npts;
 }
 
-// input_arr [img X, img Y, img val, boxcar_width]
-// npts_input is len(input_arr)
-// ndim_input is input_arr.shape[1]
-// linking_length is distance for FoF linking
-array_type_2D peak_detect(array_type_2D input_arr, int npts_input, int ndim_input, double linking_length){
+
+BFarray PeakDetect(BFarray *bf_data, double linking_length) {
+
+  // get data and Ndims from BFarray input
+  double* dataptr = (double *)bf_data->data;
+  const int num_points = bf_data->shape[0];
+  const int num_dimensions = 4;
+  boost::multi_array_ref<double, 2> input_arr{(double *)dataptr, boost::extents[num_points][num_dimensions]};
+
+  // Get rid of zeros 
   const size_t ndim = 2;
-  const size_t npts = count_hits(input_arr, npts_input);
+  const size_t npts = count_hits(input_arr, num_points);
 
-  #ifdef DEBUG
-  std::cout << "Num points: " << npts << std::endl;
-  #endif
-
-  // Split off data indexes and 
+  // Split off data indexes for FoF algorithm
   //double idx_arr[npts][ndim];
   array_type_2D idx_arr(boost::extents[npts][ndim]);  
-
   double vals_arr[npts];
   //int boxcar_arr[npts];
 
+  // Copy over from input data to index array
   for (uint i = 0; i < npts; i++) {
     idx_arr[i][0] = input_arr[i][0];
     idx_arr[i][1] = input_arr[i][1];
-    vals_arr[i]    = input_arr[i][2];
+    vals_arr[i]   = input_arr[i][2];
     //boxcar_arr[i]  = input_arr[i][3];
   }
 
   // Setup for FoF algorithm
-  //double* data = idx_arr(double *)idx_arr;
   double* data = idx_arr.data();
 
   // Run friends of friends
   //std::vector< std::vector<size_t> > v;
   auto v = friends_of_friends(data, npts, ndim, linking_length);
   
+  #ifdef DEBUG
   std::cout << "Size: " << v.size() << std::endl;
+  #endif
+
 
   // Create boost array for detected maxima
   const uint n_groups =  v.size();
-  array_type_2D maxidx_arr(boost::extents[n_groups][ndim_input]);  
+  array_type_2D maxidx_arr(boost::extents[n_groups][num_dimensions]);  
 
   // Loop through all groups
   for (uint i = 0; i < v.size(); i++) {
@@ -98,5 +118,18 @@ array_type_2D peak_detect(array_type_2D input_arr, int npts_input, int ndim_inpu
     #endif
   }
 
-  return maxidx_arr; //0; //*maxidx_arr; 
+  // Create array
+  BFarray bf_peaks = bfArrayCreate(BF_SPACE_SYSTEM, BF_DTYPE_F64, 2);
+  bf_peaks.shape[0]   = maxidx_arr.size();
+  bf_peaks.shape[1]   = num_dimensions;
+  bf_peaks.strides[0] = 8 * num_dimensions;
+  bf_peaks.strides[1] = 8;
+
+  // Copy data over
+  bfArrayMalloc(&bf_peaks);
+  long size_bytes = bf_peaks.strides[0] * bf_peaks.shape[0];
+  memcpy(bf_peaks.data, maxidx_arr.data(), size_bytes);
+
+  return bf_peaks;
+
 }

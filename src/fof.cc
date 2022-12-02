@@ -48,9 +48,7 @@ struct d2_calc {
 
     template< typename U > void operator()(U i)
     {
-        // DCP 22.12.02 - change for speed
-        //d2 += pow( bg::get<i>(p1) - bg::get<i>(p2), 2);
-        d2 += abs( bg::get<i>(p1) - bg::get<i>(p2));
+        d2 += pow( bg::get<i>(p1) - bg::get<i>(p2), 2);
     }
 };
 
@@ -119,10 +117,7 @@ friends_of_friends_rtree(double *data, size_t npts, double linking_length)
             auto within_ball = [&it, linking_length](value_t const &v) {
                 double d2 = 0.;
                 bmpl::for_each< dim_range >( d2_calc<D>(it->first, v.first, d2) );
-                
-                //DCP 22.12.02 - change for speed
-                //return sqrt(d2) < linking_length;
-                return d2 < linking_length;
+                return sqrt(d2) < linking_length;
             };
 
             // Find all points within a linking length of the current point.

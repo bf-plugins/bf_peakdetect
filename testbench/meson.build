@@ -1,7 +1,7 @@
 testexe = executable(
     'test_peakdetect', # test executable name 
     'test_peakdetect.cc', # Test source
-    include_directories : incdir,
+    include_directories : [incdir, bf_include],
     link_with: lib_peakdetect,
     dependencies : doctest_dep) 
 

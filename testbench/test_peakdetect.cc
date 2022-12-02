@@ -47,17 +47,17 @@ TEST_CASE("Test suite for peak detection") {
   // TEST: Count hits
   CHECK(count_hits(input_arr, npts_input) == 21);  // 21 non-zero entries in input_arr
 
-  //TEST: peak_detect
-  auto peak_arr = peak_detect(input_arr, npts_input, ndim_input, linking_length);
-  CHECK(peak_arr.size() == 2); 
-  CHECK(peak_arr.num_elements() == 8); 
-  CHECK(peak_arr.num_dimensions() == 2); 
+  //OLD TEST: peak_detect (multiarray interface, deprecated in favor of BFarray)
+  //auto peak_arr = peak_detect(input_arr, npts_input, ndim_input, linking_length);
+  //CHECK(peak_arr.size() == 2); 
+  //CHECK(peak_arr.num_elements() == 8); 
+  //CHECK(peak_arr.num_dimensions() == 2); 
 
   // Max value in input array is 19, 493 for first group (index 0), and 1, 1 (index 20)
-  CHECK(peak_arr[0][0] == input_arr[0][0]);
-  CHECK(peak_arr[0][1] == input_arr[0][1]);
-  CHECK(peak_arr[1][0] == input_arr[20][0]);
-  CHECK(peak_arr[1][0] == input_arr[20][0]);
+  //CHECK(peak_arr[0][0] == input_arr[0][0]);
+  //CHECK(peak_arr[0][1] == input_arr[0][1]);
+  //CHECK(peak_arr[1][0] == input_arr[20][0]);
+  //CHECK(peak_arr[1][0] == input_arr[20][0]);
 
   //std::cout << "a.shape(): " << peak_arr.shape() << std::endl;
   //std::cout << "a.num_elements(): " << peak_arr.num_elements() << std::endl;
