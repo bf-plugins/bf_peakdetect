@@ -8,12 +8,15 @@ namespace {
 
 typedef std::pair<size_t, double*> Point;
 
+// DCP 22.12.02 - Changed for speed, now returns dx + dy
 double dist(double *p1, double *p2, size_t ndim) {
     double d2 = 0.;
     for(size_t i = 0 ; i < ndim ; ++i) {
-        d2 += pow(p1[i] - p2[i], 2);
+        //d2 += pow(p1[i] - p2[i], 2);
+        d2 += abs(p1[i] - p2[i]);
     }
-    return sqrt(d2);
+    //return sqrt(d2);
+    return d2;
 }
 
 } // anonymous namespace
